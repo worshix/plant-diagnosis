@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Result - Tobacco Disease Classifier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .prediction-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .prediction-badge.angular_leaf_spot {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .prediction-badge.wildfire {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .prediction-badge.healthy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .prediction-badge.unknown {
+            background: #f5f5f5;
+            color: #616161;
+        }
+        
+        .confidence {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .confidence-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .image-section {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .image-container {
+            flex: 1;
+        }
+        
+        .image-container img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .conditions-box {
+            flex: 0 0 200px;
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .conditions-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .condition-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .condition-item:last-child {
+            border-bottom: none;
+        }
+        
+        .disease-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .info-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .symptoms-list {
+            list-style: none;
+        }
+        
+        .symptoms-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .symptoms-list li::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            margin-left: 10px;
+        }
+        
+        .similar-images {
+            margin-top: 30px;
+        }
+        
+        .similar-images h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Classification Result</h1>
+        
+        <div class="card">
+            <div class="result-header">
+                <div class="prediction-badge {{ leaf.predicted_disease }}">
+                    {{ disease_info.name }}
+                </div>
+                <div class="confidence">
+                    Confidence: <span class="confidence-value">{{ leaf.confidence_score|floatformat:1 }}%</span>
+                </div>
+            </div>
+            
+            <div class="image-section">
+                <div class="image-container">
+                    <img src="{{ leaf.image.url }}" alt="Uploaded leaf">
+                </div>
+                <div class="conditions-box">
+                    <h3>Conditions</h3>
+                    <div class="condition-item">
+                        <span>Temperature</span>
+                        <strong>{{ leaf.temperature|default:"--" }}°C</strong>
+                    </div>
+                    <div class="condition-item">
+                        <span>Humidity</span>
+                        <strong>{{ leaf.humidity|default:"--" }}%</strong>
+                    </div>
+                    <div class="condition-item">
+                        <span>Moisture</span>
+                        <strong>{{ leaf.moisture_content|default:"--" }}%</strong>
+                    </div>
+                    <div class="condition-item">
+                        <span>Date</span>
+                        <strong>{{ leaf.uploaded_at|date:"M d, Y" }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card disease-info">
+            <h3>Disease Information</h3>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h4>Pathogen</h4>
+                    <p>{{ disease_info.pathogen }}</p>
+                </div>
+                <div class="info-box">
+                    <h4>Favorable Conditions</h4>
+                    <p>{{ disease_info.conditions }}</p>
+                    <p><strong>Temp:</strong> {{ disease_info.favorable_temp }}</p>
+                    <p><strong>Humidity:</strong> {{ disease_info.favorable_humidity }}</p>
+                </div>
+                <div class="info-box" style="grid-column: 1 / -1;">
+                    <h4>Key Symptoms</h4>
+                    <ul class="symptoms-list">
+                        {% for symptom in disease_info.symptoms %}
+                        <li>{{ symptom }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card ai-analysis">
+            <h3>🤖 AI Analysis ({{ classification_details.method }})</h3>
+            <div class="info-grid">
+                <div class="info-box" style="grid-column: 1 / -1;">
+                    <h4>Reasoning</h4>
+                    <p style="line-height: 1.6; color: #444;">{{ classification_details.reasoning }}</p>
+                </div>
+                <div class="info-box" style="grid-column: 1 / -1;">
+                    <h4>Distinguishing Features</h4>
+                    <p style="line-height: 1.6; color: #444;">{{ classification_details.features }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if similar_images %}
+        <div class="card similar-images">
+            <h3>Similar Cases in Dataset</h3>
+            <div class="image-grid">
+                {% for img in similar_images %}
+                <img src="{{ img.image.url }}" alt="Similar case">
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="actions">
+            <a href="{% url 'diagosis:upload' %}" class="btn">Upload Another</a>
+            <a href="{% url 'diagosis:dataset' %}" class="btn btn-secondary">View Dataset</a>
+        </div>
+    </div>
+</body>
+</html>

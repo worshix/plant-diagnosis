@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset - Tobacco Disease Classifier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .image-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .image-table th,
+        .image-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .image-table th {
+            font-weight: 600;
+            color: #333;
+            background: #f8f9ff;
+        }
+        
+        .image-table tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .image-table img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.angular_leaf_spot {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .badge.wildfire {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .badge.healthy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .badge.unknown {
+            background: #f5f5f5;
+            color: #616161;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dataset Overview</h1>
+        
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total }}</div>
+                <div class="stat-label">Total Images</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.angular }}</div>
+                <div class="stat-label">Angular Leaf Spot</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.wildfire }}</div>
+                <div class="stat-label">Wildfire</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.healthy }}</div>
+                <div class="stat-label">Healthy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.unknown }}</div>
+                <div class="stat-label">Unknown</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            {% if images %}
+            <table class="image-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Actual Disease</th>
+                        <th>Predicted</th>
+                        <th>Confidence</th>
+                        <th>Temp</th>
+                        <th>Humidity</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for img in images %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'diagosis:classify' img.pk %}">
+                                <img src="{{ img.image.url }}" alt="Leaf image">
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge {{ img.actual_disease }}">
+                                {{ img.get_actual_disease_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {{ img.predicted_disease|default:'unknown' }}">
+                                {{ img.get_predicted_disease_display|default:"Not predicted" }}
+                            </span>
+                        </td>
+                        <td>{{ img.confidence_score|floatformat:1|default:"--" }}%</td>
+                        <td>{{ img.temperature|default:"--" }}°C</td>
+                        <td>{{ img.humidity|default:"--" }}%</td>
+                        <td>{{ img.uploaded_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📷</div>
+                <h3>No images yet</h3>
+                <p>Upload your first leaf image to start building the dataset.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="actions">
+            <a href="{% url 'diagosis:upload' %}" class="btn">Upload New Image</a>
+        </div>
+    </div>
+</body>
+</html>
