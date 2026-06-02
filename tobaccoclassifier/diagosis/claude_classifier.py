@@ -4,6 +4,19 @@ import os
 from anthropic import Anthropic
 
 
+def get_image_media_type(image_path):
+    """Detect the correct media type based on file extension."""
+    ext = os.path.splitext(image_path.lower())[1]
+    mime_types = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp'
+    }
+    return mime_types.get(ext, 'image/jpeg')
+
+
 def classify_with_claude(image_path, temperature=None, humidity=None, moisture=None):
     """
     Use Claude Vision API to classify tobacco leaf disease.
@@ -18,6 +31,8 @@ def classify_with_claude(image_path, temperature=None, humidity=None, moisture=N
     # Read and encode image
     with open(image_path, 'rb') as f:
         image_data = base64.b64encode(f.read()).decode('utf-8')
+    
+    media_type = get_image_media_type(image_path)
     
     # Build prompt with environmental conditions
     conditions_text = ""
@@ -67,7 +82,7 @@ Do not include any other text, markdown formatting, or explanations outside the 
                             "type": "image",
                             "source": {
                                 "type": "base64",
-                                "media_type": "image/jpeg",
+                                "media_type": media_type,
                                 "data": image_data
                             }
                         },
