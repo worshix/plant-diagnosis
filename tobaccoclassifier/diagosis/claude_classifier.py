@@ -72,7 +72,7 @@ Do not include any other text, markdown formatting, or explanations outside the 
 
     try:
         response = client.messages.create(
-            model="claude-3-haiku-20240307",  # Fast and cost-effective
+            model="claude-haiku-4-5-20251001",
             max_tokens=500,
             messages=[
                 {
