@@ -135,6 +135,15 @@ def get_disease_info(disease_code):
             'conditions': 'Cool, wet weather (20-25°C, high humidity)',
             'favorable_temp': '20-25°C',
             'favorable_humidity': '>70%',
+            'recommendations': [
+                'Remove and destroy all infected leaves immediately to reduce spread',
+                'Avoid overhead irrigation — water at the base to keep foliage dry',
+                'Apply copper-based bactericide (e.g., copper hydroxide) as a preventive spray',
+                'Improve field drainage to reduce prolonged leaf wetness',
+                'Do not work in the field while plants are wet — bacteria spread on hands and tools',
+                'Rotate crops — avoid tobacco and solanaceous plants on the same land for at least 2 years',
+                'Scout remaining plants every 2–3 days for new infections',
+            ],
         },
         'wildfire': {
             'name': 'Wildfire',
@@ -148,6 +157,15 @@ def get_disease_info(disease_code):
             'conditions': 'Warm, humid weather (28-32°C)',
             'favorable_temp': '28-32°C',
             'favorable_humidity': '50-70%',
+            'recommendations': [
+                'Remove and burn heavily infected plants — do not compost them',
+                'Reduce nitrogen fertilizer application — excess nitrogen promotes soft, vulnerable growth',
+                'Apply copper-based bactericide preventively, especially before expected rain',
+                'Avoid any mechanical damage to plants — wounds are the main entry point for the bacteria',
+                'Disinfect tools and equipment with bleach solution (1:10) between rows',
+                'Ensure good plant spacing to improve airflow and reduce humidity around leaves',
+                'Harvest early if infection is spreading rapidly to salvage unaffected leaves',
+            ],
         },
         'healthy': {
             'name': 'Healthy Leaf',
@@ -156,6 +174,15 @@ def get_disease_info(disease_code):
             'conditions': 'Normal growing conditions',
             'favorable_temp': '25-30°C',
             'favorable_humidity': '60-70%',
+            'recommendations': [
+                'Continue current management practices — the crop looks good',
+                'Scout the field weekly for early signs of Angular Leaf Spot or Wildfire',
+                'Maintain good plant spacing for airflow and to reduce humidity between plants',
+                'Avoid overhead irrigation and water early in the day so leaves dry quickly',
+                'Keep nitrogen fertilizer at recommended levels — do not over-apply',
+                'Practice crop rotation at the end of the season to prevent soil buildup of pathogens',
+                'Remove and dispose of crop debris after harvest to reduce disease carryover',
+            ],
         },
         'unknown': {
             'name': 'Unknown/Unclassified',
@@ -164,6 +191,11 @@ def get_disease_info(disease_code):
             'conditions': 'Environmental conditions unclear',
             'favorable_temp': 'N/A',
             'favorable_humidity': 'N/A',
+            'recommendations': [
+                'Take a clearer photo in good lighting and re-upload for a better diagnosis',
+                'Collect a sample of the affected leaf and consult a local agricultural extension officer',
+                'Monitor the plant closely over the next 48 hours for symptom progression',
+            ],
         }
     }
     return info.get(disease_code, info['unknown'])

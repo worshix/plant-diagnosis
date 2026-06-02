@@ -194,6 +194,58 @@
             margin-left: 10px;
         }
         
+        .recommendations h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .recommendations-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .recommendations-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .recommendations-list li::before {
+            content: "✓";
+            font-weight: bold;
+            color: #667eea;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .angular_leaf_spot ~ .card .recommendations-list li,
+        .card.angular_leaf_spot-rec li {
+            border-left-color: #1565c0;
+        }
+
+        .card.angular_leaf_spot-rec li::before { color: #1565c0; }
+
+        .card.wildfire-rec li {
+            border-left-color: #ef6c00;
+        }
+
+        .card.wildfire-rec li::before { color: #ef6c00; }
+
+        .card.healthy-rec li {
+            border-left-color: #2e7d32;
+        }
+
+        .card.healthy-rec li::before { color: #2e7d32; }
+
         .similar-images {
             margin-top: 30px;
         }
@@ -282,20 +334,15 @@
             </div>
         </div>
         
-        <div class="card ai-analysis">
-            <h3>🤖 AI Analysis ({{ classification_details.method }})</h3>
-            <div class="info-grid">
-                <div class="info-box" style="grid-column: 1 / -1;">
-                    <h4>Reasoning</h4>
-                    <p style="line-height: 1.6; color: #444;">{{ classification_details.reasoning }}</p>
-                </div>
-                <div class="info-box" style="grid-column: 1 / -1;">
-                    <h4>Distinguishing Features</h4>
-                    <p style="line-height: 1.6; color: #444;">{{ classification_details.features }}</p>
-                </div>
-            </div>
+        <div class="card recommendations {{ leaf.predicted_disease }}-rec">
+            <h3>Farmer Recommendations</h3>
+            <ul class="recommendations-list">
+                {% for rec in disease_info.recommendations %}
+                <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
         </div>
-        
+
         {% if similar_images %}
         <div class="card similar-images">
             <h3>Similar Cases in Dataset</h3>
